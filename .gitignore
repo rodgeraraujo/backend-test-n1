@@ -1,0 +1,14 @@
+.idea/
+.vscode/
+node_modules/
+coverage/
+build/
+tmp/
+temp/
+*.log
+.env
+.env.*
+!.env.example
+*.cert
+*.key
+.rabbitmq_data
