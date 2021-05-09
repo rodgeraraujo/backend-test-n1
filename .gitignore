@@ -12,3 +12,4 @@ temp/
 *.cert
 *.key
 .rabbitmq_data
+*.csv

@@ -8,6 +8,7 @@ import { Conflict } from '~/packages/api/helpers/exceptions/conflict'
 import { NotFound } from '~/packages/api/helpers/exceptions/notFound'
 import { BadRequest } from '~/packages/api/helpers/exceptions/badRequest'
 import { InternalServer } from '../../helpers/exceptions/internalServer'
+import { generateWorkflowCSV } from './service'
 
 export const list = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
   try {
@@ -91,7 +92,8 @@ export const consume = async (req: Request, res: Response, next: NextFunction) =
 
     try {
       await workflowRepository.save(workflow)
-      return res.status(httpStatus.OK).send({ message: 'Workflow successfully consumed.' })
+      const csv = await generateWorkflowCSV(workflow)
+      return res.status(httpStatus.OK).download(csv, `${workflow.uuid}.csv`)
     } catch (err) {
       return next(new Conflict(`Workflow '${workflow.uuid}' can't be saved.`))
     }

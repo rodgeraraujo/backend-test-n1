@@ -28,8 +28,6 @@ const convertToException = (err: any): APIException | InvalidParameter | NotFoun
 }
 
 export const handleErrors = (err: any, req: Request, res: Response, next: NextFunction) => {
-  console.log(err)
-
   let response: ErrorResponse = {
     code: httpStatus.INTERNAL_SERVER_ERROR,
     message: 'Something bad happened.',
