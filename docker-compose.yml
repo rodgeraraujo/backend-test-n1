@@ -1,0 +1,53 @@
+version: "3"
+
+services:
+  postgres:
+    image: postgres:12.2
+    container_name: postgres-database
+    ports:
+        - "5432:5432"
+    environment:
+        POSTGRES_USER: myuser
+        POSTGRES_PASSWORD: secret_pass
+        POSTGRES_DB: workflow_db
+
+  rabbitmq-server:
+    image: "rabbitmq:3.8-management-alpine"
+    container_name: rabbitmq-server
+    hostname: rabbitmq
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    volumes:
+      - "./.rabbitmq_data:/var/lib/rabbitmq/mnesia"
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+      
+  api-server:
+    build:
+      context: .
+    container_name: api-server
+    image: api-server
+    restart: unless-stopped
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - NODE_ENV=production
+      - DB_HOST=postgres
+      - DB_NAME=workflow_db
+      - DB_PASSWORD=secret_pass
+      - DB_PORT=5432
+      - DB_USERNAME=myuser
+      - DB_MAIN_SCHEMA=public
+      - RABBITMQ_USER=admin
+      - RABBITMQ_PASSWORD=admin
+      - RABBITMQ_HOST=rabbitmq-server
+      - RABBITMQ_PORT=5672
+      - SERVER_PORT=3000
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/home/node/api-server
+    depends_on: 
+      - rabbitmq-server
+      - postgres
