@@ -19,13 +19,10 @@ export default class RabbitmqServer {
     this.channel.prefetch(1)
     const message = await this.channel.get(queue).then(msg => {
       if (msg) {
-        console.log(msg.content.toString())
         this.channel.ack(msg)
         return JSON.parse(msg.content.toString())
       }
     })
-
-    console.log('message', message)
 
     return message
   }

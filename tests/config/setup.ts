@@ -2,7 +2,7 @@
 require('tsconfig-paths/register')
 
 import * as http from 'http'
-import app from '../../server'
+import app from '../../src/server'
 
 module.exports = async (): Promise<any> => {
   const server = http.createServer(app)

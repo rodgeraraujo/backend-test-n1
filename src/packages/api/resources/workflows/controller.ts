@@ -13,7 +13,7 @@ export const list = async (req: Request, res: Response, next: NextFunction): Pro
   try {
     const workflowRepository = getRepository(Workflow)
     const workflow = await workflowRepository.find()
-    return res.status(201).send(workflow)
+    return res.status(200).send(workflow)
   } catch (error) {
     return next(new InternalServer(error.message))
   }
@@ -33,7 +33,7 @@ export const save = async (req: Request, res: Response, next: NextFunction) => {
     const broker = await getInstance()
     await broker.publishInQueue('workflows', JSON.stringify(workflow))
 
-    return res.status(httpStatus.OK).send(workflow)
+    return res.status(httpStatus.CREATED).send(workflow)
   } catch (error) {
     return next(new BadRequest('Error'))
   }
@@ -91,7 +91,7 @@ export const consume = async (req: Request, res: Response, next: NextFunction) =
 
     try {
       await workflowRepository.save(workflow)
-      return res.status(httpStatus.OK).send({ message: 'Workflow successfully saved.' })
+      return res.status(httpStatus.OK).send({ message: 'Workflow successfully consumed.' })
     } catch (err) {
       return next(new Conflict(`Workflow '${workflow.uuid}' can't be saved.`))
     }
